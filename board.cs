@@ -184,24 +184,28 @@ namespace Maze {
           if (now[x] == now[x-1]) continue;
           if (rand.Next(2) == 0) {
             setsNow.Remove(now[x]);
+            int delNum = now[x];
             for(int i = 0; i < now.Length;i++) {
-              if (now[i] == now[x]) now[i] = now[x-1];
+              if (now[i] == delNum) {
+                now[i] = now[x-1];
+              }
             }
+            Console.WriteLine();
             Tile[y,2 * x] = TileType.EMPTY;
           }
         }
 
         
-        Console.WriteLine($"----{y}----");
-        foreach(KeyValuePair<int,List<int>> i in setsNow) {
-          Console.Write(i.Key + " : ");
-          foreach(int j in i.Value) Console.Write(j + ", ");
-          Console.WriteLine();
-        }
-        Console.Write("[");
-        foreach(int i in now) Console.Write($" {i} ");
-        Console.WriteLine("]");
-        Console.WriteLine("---------");
+        // Console.WriteLine($"----{y}----");
+        // foreach(KeyValuePair<int,List<int>> i in setsNow) {
+        //   Console.Write(i.Key + " : ");
+        //   foreach(int j in i.Value) Console.Write(j + ", ");
+        //   Console.WriteLine();
+        // }
+        // Console.Write("[");
+        // foreach(int i in now) Console.Write($" {i} ");
+        // Console.WriteLine("]");
+        // Console.WriteLine("---------");
         
         foreach(KeyValuePair<int,List<int>> i in setsNow) {
           int downs = rand.Next(1,i.Value.Count + 1);
@@ -230,17 +234,17 @@ namespace Maze {
         var tmp2 = setsNow;
         setsNow = setsNext;
         setsNext = tmp2;
-        
-        Console.WriteLine($"----{y + 2}(B)---");
-        foreach(KeyValuePair<int,List<int>> i in setsNow) {
-          Console.Write(i.Key + " : ");
-          foreach(int j in i.Value) Console.Write(j + ", ");
-          Console.WriteLine();
-        }
-        Console.Write("[");
-        foreach(int i in now) Console.Write($" {i} ");
-        Console.WriteLine("]");
-        Console.WriteLine("---------");
+
+        // Console.WriteLine($"----{y + 2}(B)---");
+        // foreach(KeyValuePair<int,List<int>> i in setsNow) {
+        //   Console.Write(i.Key + " : ");
+        //   foreach(int j in i.Value) Console.Write(j + ", ");
+        //   Console.WriteLine();
+        // }
+        // Console.Write("[");
+        // foreach(int i in now) Console.Write($" {i} ");
+        // Console.WriteLine("]");
+        // Console.WriteLine("---------");
         setsNext.Clear();
       }
 

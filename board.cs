@@ -4,11 +4,13 @@ using System.Collections.Generic;
 namespace Maze {
   
   class Board {
-
+    
     public enum TileType {
       EMPTY,
       WALL,
-      PATH
+      PATH,
+      PATH_START,
+      PATH_DEST
     }
 
     const char EMPTY_CHAR = ' ';//\u28a1
@@ -18,14 +20,25 @@ namespace Maze {
     public int Size {
       get {return Tile.GetLength(0);}
     }
-    private (int,int) dest;
+    public (int,int) Start {get; private set;}
+    public (int,int) Dest {get; private set;}
     
-    public Board(int size) {
+    public Board(int size,(int,int) start,(int,int) dest) {
       if (size % 2 == 0) size++;
       Tile = new TileType[size,size];
-      dest = (size-2,size-2);
+      int x = Math.Max(start.Item1,1),y = Math.Max(start.Item2,1);
+      if (x % 2 == 0) x++;
+      if (y % 2 == 0) y++;
+      Start = (Math.Min(x,Size-2),Math.Min(y,Size-2));
+      x = dest.Item1;
+      y = dest.Item2;
+      if (x % 2 == 0) x++;
+      if (y % 2 == 0) y++;
+      Dest = (Math.Min(x,Size-2),Math.Min(y,Size-2));
       Reset();
     }
+
+    public Board(int size) : this(size,(1,1),(size-2,size-2)) {}
     
     public void Reset() {
       for(int y = 0 ; y < Size; y++) {
@@ -38,13 +51,9 @@ namespace Maze {
           }
         }
       }
-      try {
-        GenerateByEller2();
-      }catch (Exception e) {
-        Console.WriteLine(e.Message);
-        Console.WriteLine(e.StackTrace);
-      }
-      Tile[0,1] = Tile[0,Size-2] = TileType.EMPTY;
+      GenerateByEller2();
+      Tile[Start.Item2,Start.Item1] = TileType.PATH_START;
+      Tile[Dest.Item2,Dest.Item1] = TileType.PATH_DEST;
     }
     
     void GenerateByEller1() {
@@ -190,7 +199,6 @@ namespace Maze {
                 now[i] = now[x-1];
               }
             }
-            Console.WriteLine();
             Tile[y,2 * x] = TileType.EMPTY;
           }
         }
@@ -266,7 +274,7 @@ namespace Maze {
               continue;
           int rnum = rand.Next(0,2);
           if (rnum == 0) {
-            if (x != dest.Item1) {
+            if (x != Size -2) {
               Tile[y,x + 1] = TileType.EMPTY;
               cnt++;
             }
@@ -278,7 +286,7 @@ namespace Maze {
           else {
             int rindex = rand.Next(0,cnt);
             int rx = x - rindex * 2;
-            Tile[y + (y == dest.Item2 ? -1:1),rx] = TileType.EMPTY;
+            Tile[y + (y == Size - 2 ? -1:1),rx] = TileType.EMPTY;
             cnt = 1;
           }
         }
@@ -295,9 +303,9 @@ namespace Maze {
           
           int rnum = rand.Next(0,2);
           if (rnum == 0) {
-            if (x != dest.Item1) Tile[y,x + 1] = TileType.EMPTY;
+            if (x != Size - 2) Tile[y,x + 1] = TileType.EMPTY;
           }
-          else if (y != dest.Item2) {
+          else if (y != Size - 2) {
             Tile[y + 1,x] = TileType.EMPTY;
           }
         }
@@ -316,26 +324,33 @@ namespace Maze {
     public void Render() {
       for (int y = 0; y < Size; y++) {
         for (int x = 0; x < Size; x++) {
-          char shape;
-          Console.ForegroundColor = getTileShape(Tile[y,x],out shape);
+          ConsoleColor color;
+          char shape = getTileShape(Tile[y,x],out color);
+          Console.ForegroundColor = color;
           Console.Write(shape);
         }
         Console.WriteLine();
       }
     }
 
-    ConsoleColor getTileShape(TileType tt,out char shape) {
+    char getTileShape(TileType tt,out ConsoleColor color) {
       switch (tt) {
       case TileType.WALL:
-        shape = WALL_CHAR;
-        return ConsoleColor.Green;
+        color = ConsoleColor.Green;
+        return WALL_CHAR;
       case TileType.PATH:
-        shape = PATH_CHAR;
-        return ConsoleColor.Blue;
+        color = ConsoleColor.Blue;
+        return PATH_CHAR;
+      case TileType.PATH_START:
+        color = ConsoleColor.Yellow;
+        return PATH_CHAR;
+      case TileType.PATH_DEST:
+        color = ConsoleColor.Cyan;
+        return PATH_CHAR;
       case TileType.EMPTY:
       default:
-        shape = EMPTY_CHAR;
-        return ConsoleColor.Red;
+        color = ConsoleColor.Red;
+        return EMPTY_CHAR;
       }
     }
     

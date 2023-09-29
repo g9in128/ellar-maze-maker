@@ -312,13 +312,15 @@ namespace Maze {
       }
     }
 
-    public void MovePlayer((int,int) cordinate) {
+    public bool MovePlayer((int,int) cordinate) {
       if (Tile[cordinate.Item2,cordinate.Item1] == TileType.EMPTY) {
         Tile[cordinate.Item2,cordinate.Item1] = TileType.PATH;
+        return true;
       }
+      return false;
     }
 
-    public void MovePlayer(int x,int y) {MovePlayer((x,y));}
+    public bool MovePlayer(int x,int y) {return MovePlayer((x,y));}
   
 
     public void Render() {
@@ -345,11 +347,11 @@ namespace Maze {
         color = ConsoleColor.Yellow;
         return PATH_CHAR;
       case TileType.PATH_DEST:
-        color = ConsoleColor.Cyan;
+        color = ConsoleColor.Red;
         return PATH_CHAR;
       case TileType.EMPTY:
       default:
-        color = ConsoleColor.Red;
+        color = ConsoleColor.White;
         return EMPTY_CHAR;
       }
     }

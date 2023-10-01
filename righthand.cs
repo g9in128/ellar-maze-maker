@@ -1,12 +1,15 @@
-using System;
+
 
 namespace Maze
 {
-  class RightHand : Player
+  class RightHand : PathFindingAlgorithm
   {
-    private (int,int) facing;
+    (int,int) facing;
+    int posX,posY;
     public RightHand(Board board) : base(board) {
       facing = (1,0);
+      posX = board.Start.Item1;
+      posY = board.Start.Item2;
     }
 
     private (int,int) turn(bool isRight) {
@@ -23,31 +26,30 @@ namespace Maze
 
     private (int,int) forward((int,int) dirction,bool move = false) {
       if (move) {
-        PosX += dirction.Item1;
-        PosY += dirction.Item2;
-        return (PosX,PosY);
+        posX += dirction.Item1;
+        posY += dirction.Item2;
+        return (posX,posY);
       }
-      return (PosX + dirction.Item1,PosY + dirction.Item2);
+      return (posX + dirction.Item1,posY + dirction.Item2);
     }
     
     public override void FindPath()
     {
-      while(PosX != _board.Dest.Item1 || PosY != _board.Dest.Item2) {
+      while(posX != _board.Dest.Item1 || posY != _board.Dest.Item2) {
         (int,int) rightLoc = forward(turn(true));
         (int,int) forwardLoc = forward();
         if (_board.Tile[rightLoc.Item2,rightLoc.Item1] != Board.TileType.WALL) {
-          PosX = rightLoc.Item1;
-          PosY = rightLoc.Item2;
+          posX = rightLoc.Item1;
+          posY = rightLoc.Item2;
           facing = turn(true);
-          bool b = _board.MovePlayer(PosX,PosY);
+          bool b = _board.MakePath(posX,posY);
         }
         else if (_board.Tile[forwardLoc.Item2,forwardLoc.Item1] != Board.TileType.WALL) {
-          bool b = _board.MovePlayer(forward(true));
+          bool b = _board.MakePath(forward(true));
         }else {
           facing = turn(false);
         }
       }
-      Console.WriteLine();
     }
   }
 }

@@ -55,6 +55,14 @@ namespace Maze {
       Tile[Start.Item2,Start.Item1] = TileType.PATH_START;
       Tile[Dest.Item2,Dest.Item1] = TileType.PATH_DEST;
     }
+
+    public void ClearPath() {
+      for (int i = 0; i < Size;i++) {
+        for (int j = 0 ; j < Size;j++) {
+          if (Tile[i,j] == TileType.PATH) Tile[i,j] = TileType.EMPTY;
+        }
+      }
+    }
     
     void GenerateByEller1() {
       Random rand = new Random();
@@ -312,7 +320,7 @@ namespace Maze {
       }
     }
 
-    public bool MovePlayer((int,int) cordinate) {
+    public bool MakePath((int,int) cordinate) {
       if (Tile[cordinate.Item2,cordinate.Item1] == TileType.EMPTY) {
         Tile[cordinate.Item2,cordinate.Item1] = TileType.PATH;
         return true;
@@ -320,7 +328,7 @@ namespace Maze {
       return false;
     }
 
-    public bool MovePlayer(int x,int y) {return MovePlayer((x,y));}
+    public bool MakePath(int x,int y) {return MakePath((x,y));}
   
 
     public void Render() {

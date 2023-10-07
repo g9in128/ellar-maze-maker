@@ -9,12 +9,21 @@ class Program {
     PathFindingAlgorithm a = new RightHand(board);
     a.FindPath();
     board.Render();
+    
     board.ClearPath();
     Console.WriteLine();
 
     PathFindingAlgorithm b = new BreadthFirstSearch(board);
     b.FindPath();
-    
     board.Render();
+
+    board.ClearPath();
+    Console.WriteLine();
+
+    PathFindingAlgorithm c = new AStar(board);
+
+    c.FindPath();
+    board.Render();
+    
   }
 }
